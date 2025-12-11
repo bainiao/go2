@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"sync"
+	"time"
 )
 
 func main() {
@@ -244,8 +245,103 @@ func main() {
 	// case <-ctx.Done():
 	// 	fmt.Println("deadline exceeded:", ctx.Err())
 	// }
-	l := findLongestTime([]rune{'a', 'a', 'a', 'b', 'b', 'b', 'c', 'd'}, 3)
-	fmt.Println(l)
+	// l := findLongestTime([]rune{'a', 'a', 'a', 'b', 'b', 'b', 'c', 'd'}, 3)
+	// fmt.Println(l)
+
+	// writeOddEven(10)
+
+	// arrays := [][]int{
+	// 	{1, 2, 3},
+	// 	{4, 5},
+	// 	{1, 2, 3, 4},
+	// 	{10, 11},
+	// 	{-1, 0},
+	// }
+	// fmt.Println(maxDistance(arrays))
+
+	// ch := make(chan int, 2)
+	// go func() {
+	// 	for i := 0; i < 5; i++ {
+	// 		ch <- i
+	// 	}
+	// 	close(ch)
+	// }()
+	// for n := range ch {
+	// 	fmt.Println(n)
+	// }
+
+}
+func orangesRotting(grid [][]int) int {
+	res := -1
+	rotten := make([][2]int, 0, 10)
+	freshApple := 0
+	for i := 0; i < len(grid); i++ {
+		for j := 0; j < len(grid[0]); j++ {
+			switch grid[i][j] {
+			case 2:
+				rotten = append(rotten, [2]int{i, j})
+			case 1:
+				freshApple++
+			}
+		}
+	}
+	for len(rotten) > 0 {
+		r := len(rotten)
+		for i := 0; i < r; i++ {
+			x, y := rotten[i][0], rotten[i][1]
+			directions := [][2]int{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}
+			for _, d := range directions {
+				nx, ny := x+d[0], y+d[1]
+				if nx >= 0 && nx < len(grid) && ny >= 0 && ny < len(grid[0]) && grid[nx][ny] == 1 {
+					grid[nx][ny] = 2
+					freshApple--
+					rotten = append(rotten, [2]int{nx, ny})
+				}
+			}
+		}
+		res++
+		rotten = rotten[r:]
+	}
+	return res
+}
+func maxDistance(array [][]int) int {
+	if len(array) == 0 {
+		return 0
+	}
+	min := array[0][0]
+	max := array[0][len(array[0])-1]
+	maxD := 0
+	for i := 1; i < len(array); i++ {
+		if array[i][len(array[i])-1]-min >= max-array[i][0] {
+			if array[i][len(array[i])-1]-min > maxD {
+				max = array[i][len(array[i])-1]
+			}
+		} else {
+			if max-array[i][0] > maxD {
+				min = array[i][0]
+			}
+		}
+	}
+	return max - min
+}
+func writeOddEven(n int) {
+	evench := make(chan int, n)
+	defer close(evench)
+	go func() {
+		for i := 0; i < n; i += 2 {
+			evench <- i
+			time.Sleep(time.Millisecond)
+		}
+	}()
+	go func() {
+		for i := 1; i < n; i += 2 {
+			evench <- i
+			time.Sleep(time.Millisecond)
+		}
+	}()
+	for i := 0; i < n; i++ {
+		fmt.Println(<-evench)
+	}
 }
 func findLongestTime(letters []rune, n int) int {
 	res := 0

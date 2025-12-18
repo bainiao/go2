@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"sync"
 	"time"
 )
@@ -269,7 +270,166 @@ func main() {
 	// for n := range ch {
 	// 	fmt.Println(n)
 	// }
+	// fmt.Println(isValid("()[]{}"))
 
+	fmt.Println(findKthLargest([]int{3, 2, 1, 5, 6, 4}, 2))
+}
+func findKthLargest(nums []int, k int) int {
+	n := len(nums)
+	return quickselect(nums, 0, n-1, n-k)
+}
+
+func quickselect(nums []int, l, r, k int) int {
+	if l == r {
+		return nums[k]
+	}
+	partition := nums[l]
+	i := l - 1
+	j := r + 1
+	for i < j {
+		for i++; nums[i] < partition; i++ {
+		}
+		for j--; nums[j] > partition; j-- {
+		}
+		if i < j {
+			nums[i], nums[j] = nums[j], nums[i]
+		}
+	}
+	if k <= j {
+		return quickselect(nums, l, j, k)
+	} else {
+		return quickselect(nums, j+1, r, k)
+	}
+}
+
+func findKthLargest1(nums []int, k int) int {
+	res := make([]int, k)
+	for i := 0; i < k; i++ {
+		j := 0
+		for ; j < i && res[j] < nums[i]; j++ {
+		}
+		res = append(res[:j], append([]int{nums[i]}, res[j:k-1]...)...)
+	}
+	for i := k; i < len(nums); i++ {
+		if nums[i] > res[0] {
+			j := 0
+			for ; j < k && res[j] < nums[i]; j++ {
+			}
+			res = append(res[1:j], append([]int{nums[i]}, res[j:k]...)...)
+		}
+	}
+	return res[0]
+}
+
+// type MinStack struct {
+//     s []int;
+// }
+
+type MinStack struct {
+	stack    []int
+	minStack []int
+}
+
+func Constructor() MinStack {
+	return MinStack{
+		stack:    []int{},
+		minStack: []int{math.MaxInt64},
+	}
+}
+
+func (this *MinStack) Push(x int) {
+	this.stack = append(this.stack, x)
+	top := this.minStack[len(this.minStack)-1]
+	this.minStack = append(this.minStack, min(x, top))
+}
+
+func (this *MinStack) Pop() {
+	this.stack = this.stack[:len(this.stack)-1]
+	this.minStack = this.minStack[:len(this.minStack)-1]
+}
+
+func (this *MinStack) Top() int {
+	return this.stack[len(this.stack)-1]
+}
+
+func (this *MinStack) GetMin() int {
+	return this.minStack[len(this.minStack)-1]
+}
+
+func min(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
+}
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * obj := Constructor();
+ * obj.Push(val);
+ * obj.Pop();
+ * param_3 := obj.Top();
+ * param_4 := obj.GetMin();
+ */
+// func Constructor() MinStack {
+//     ms := MinStack{
+//         s: make([]int, 0, 10),
+//     };
+// 	return ms
+// }
+// func (this *MinStack) Push(val int)  {
+//     this.s = append(this.s, val);
+// }
+
+// func (this *MinStack) Pop()  {
+//     this.s = this.s[:len(this.s)-1];
+// }
+
+// func (this *MinStack) Top() int {
+//     return this.s[len(this.s)-1];
+// }
+
+//	func (this *MinStack) GetMin() int{
+//	    if len(this.s) == 0 {
+//	        return 0
+//	    }
+//	    min := this.s[0]
+//	    for i:=0;i<len(this.s);i++{
+//	        if this.s[i] < min {
+//	            min = this.s[i]
+//	        }
+//	    }
+//	    return min
+//	}
+func isValid(s string) bool {
+	left := []rune{'(', '{', '['}
+	rightMap := map[rune]rune{
+		')': '(',
+		'}': '{',
+		']': '[',
+	}
+	stack := make([]rune, 0, len(s))
+	for _, c := range s {
+		isLeft := false
+		for _, l := range left {
+			if c == l {
+				stack = append(stack, c)
+				isLeft = true
+				break
+			}
+		}
+		if !isLeft {
+			if len(stack) == 0 {
+				return false
+			}
+			if stack[len(stack)-1] != rightMap[c] {
+				return false
+			} else {
+				stack = stack[:len(stack)-1]
+			}
+		}
+	}
+	return true && len(stack) == 0
 }
 func orangesRotting(grid [][]int) int {
 	res := -1

@@ -272,7 +272,41 @@ func main() {
 	// }
 	// fmt.Println(isValid("()[]{}"))
 
-	fmt.Println(findKthLargest([]int{3, 2, 1, 5, 6, 4}, 2))
+	// fmt.Println(findKthLargest([]int{3, 2, 1, 5, 6, 4}, 2))
+	// generate(5)
+	fmt.Println(rob([]int{2, 7, 9, 3, 1}))
+}
+func rob(nums []int) int {
+	rob_sum := make([]int, len(nums))
+	rob_sum[0] = nums[0]
+	if len(nums) == 1 {
+		return rob_sum[0]
+	}
+	rob_sum[1] = max(nums[0], nums[1])
+	if len(nums) == 2 {
+		return rob_sum[1]
+	}
+	rob_sum[2] = max(nums[0]+nums[2], nums[1])
+	if len(nums) == 3 {
+		return rob_sum[2]
+	}
+	for i := 3; i < len(nums); i++ {
+		rob_sum[i] = max(rob_sum[i-2], rob_sum[i-3]) + nums[i]
+	}
+	return max(rob_sum[len(nums)-1], rob_sum[len(nums)-2])
+}
+func generate(numRows int) [][]int {
+	res := make([][]int, numRows)
+	res[0] = []int{1}
+	for i := 1; i < numRows; i++ {
+		row := make([]int, i+1)
+		row[0], row[i] = 1, 1
+		for j := 1; j < i; j++ {
+			row[j] = res[i-1][j-1] + res[i-1][j]
+		}
+		res[i] = row
+	}
+	return res
 }
 func findKthLargest(nums []int, k int) int {
 	n := len(nums)

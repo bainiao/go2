@@ -274,7 +274,9 @@ func main() {
 
 	// fmt.Println(findKthLargest([]int{3, 2, 1, 5, 6, 4}, 2))
 	// generate(5)
-	fmt.Println(rob([]int{2, 7, 9, 3, 1}))
+	// fmt.Println(rob([]int{2, 7, 9, 3, 1}))
+	a := 9
+	fmt.Printf("%v", a/2)
 }
 func rob(nums []int) int {
 	rob_sum := make([]int, len(nums))

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"sync"
 )
 
@@ -244,8 +245,10 @@ func main() {
 	// case <-ctx.Done():
 	// 	fmt.Println("deadline exceeded:", ctx.Err())
 	// }
-	l := findLongestTime([]rune{'a', 'a', 'a', 'b', 'b', 'b', 'c', 'd'}, 3)
-	fmt.Println(l)
+	// l := findLongestTime([]rune{'a', 'a', 'a', 'b', 'b', 'b', 'c', 'd'}, 3)
+	// fmt.Println(l)
+
+	fmt.Println(math.Log(5000) / math.Log(1.0001))
 }
 func findLongestTime(letters []rune, n int) int {
 	res := 0
